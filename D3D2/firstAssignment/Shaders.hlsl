@@ -425,8 +425,11 @@ VS_TERRAIN_TESSELLATION_OUTPUT VSTerrainTessellation(VS_TERRAIN_INPUT input)
 	return(output);
 }
 
+
+
 struct HS_TERRAIN_TESSELLATION_CONSTANT
 {
+	//GPU에게 이 패치를 몇 개로 쪼갤지를 결정
 	float fTessEdges[4] : SV_TessFactor;
 	float fTessInsides[2] : SV_InsideTessFactor;
 };
@@ -448,9 +451,85 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 	float4 tessellation : TEXCOORD2;
 };
 
+//테셀레이션 핵심 
+
+//Bezier Surface : 제어점(Control Points)로 정의되는 곡면.
+	//Tessellation : 곡면을 삼각형이나 사각형 패치로 세분화하여 실제 렌더링 가능한
+	//메시(mesh)로 만드는 과정
+
+	//GPU Tessellation 파이프라인 : 
+	//Hull Shader -> Tessellator(고정기능) -> Domain Shader 단계에서 
+    //곡면을 세밀하게 분할하고, 최종적으로 화면에 그릴 정점 데이터를 생성함.
+
+//VS (Vertex Shader) - 준비 단계
+//VS_TERRAIN_TESSELLATION_OUTPUT VSTerrainTessellation(...)
+//=>여기서는 아무것도 쪼개지 않는다.
+//하는 일:
+// - 원래 정점 좌표를 넘김
+// - 월드 좌표(positionW) 계산
+// - 색상/UV 전달
+//positionW를 따로 계산한 이유는
+//나중에 HS에서 카메라와의 거리 계산하려고.
+//VS는 패치 계산을 위한 정보 전달 단계
+
+//Hull Shader (HS) - 몇 개로 쪼갤지 결정
+//*여기가 핵심*
+
+//(1) Control Point Shader 부분
+//HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(...)
+//이건 그냥 control point를 그대로 전달하는 역할.
+
+//(2) Patch Constant Function
+//HSTerrainTessellationConstant(...)
+//여기서 "이 패치를 몇 개로 나눠"하고 GPU에게 전달
+
+//거리 기반 Adaptive Tessellation
+//float fDistToCamera = distance(f3Position, gvCameraPosition);
+//return(lerp(64.0f, 1.0f, s));
+
+//의미
+//가까우면 -> 64개로 많이 쪼갬
+//멀면 -> 1개로 거의 안 쪼갬
+//=>이게 LOD 개념
+
+//Edge 계산
+//output.fTessEdges[0] = CalculateTessFactor(e0);
+//edge 기준으로 계산하는 이유는
+//패치 경계에서 크랙 방지하려고.
+//Edge 단위로 분할 정도를 정해야 옆 패치와 맞물린다.
+
+//(3) Tessellator (고정 기능 하드웨어)
+//여기는 코드가 없음.
+//GPU 내부에서 자동으로:
+// - Edge Factor 기준으로
+// - 삼각형 또는 quad를 분할
+//프로젝트에는 integer partitioning을 사용했음.
+
+//(4) Domain Shader (DS) - 실제 위치 계산
+//수학적으로 가장 깊은 부분
+//25개 Control Point
+//[
+
+//특징
+//정밀도 조절 가능 : 
+//카메라와의 거리, 곡면의 곡률(curvature)에 따라 삼각형 분할 정도를 동적으로 조절 가능
+
+//적응형 테셀레이션 : 
+//곡면의 복잡한 부분은 더 세밀하게, 평평한 부분은 덜 세밀하게 분할하여 성능과 품질을 
+//균형 있게 유지
+
+//활용 예시 : 자동차 외형, 곡선 기반 건축물, 고품질 CAD 모델을 실시간 렌더링할 때 사용됨.
+
+
 [domain("quad")]
 //[partitioning("fractional_even")]
 [partitioning("integer")]
+//=>의미 : 
+// - 소수 분할 없이 정수 단위 분할
+// - 안정적
+// - fractional보다 덜 부드럽지만 안전
+
+
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(25)]
 [patchconstantfunc("HSTerrainTessellationConstant")]
@@ -552,6 +631,11 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 
 	//25개 control point를 이용해서
 	//Bezier 곡면으로 실제 위치 계산
+
+	//Bezier Surface 기반 테셀레이션은 컴퓨터 그래픽스에서 곡면을 더 세밀하게 
+	//삼각형(폴리곤)으로 분할하는 과정을 말함.
+	//특히 Bezier 곡면은 수학적으로 정의된 곡선/곡면으로, 이를 GPU에서 직접 렌더링하기 위해서는
+	//테셀레이션 셰이더를 통해 작은 삼각형 패치로 나누어야 함.
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
