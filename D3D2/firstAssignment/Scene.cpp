@@ -412,7 +412,7 @@ ID3D12RootSignature* CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevic
 
 void CScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
 		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
@@ -512,8 +512,8 @@ bool CScene::ProcessInput(UCHAR* pKeysBuffer)
 void CScene::AnimateObjects(float fTimeElapsed)
 {
 
-	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed, NULL);
-	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->UpdateTransform(NULL);
+	for (int i{}; i < m_nGameObjects; ++i) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed, NULL);
+	for (int i{}; i < m_nGameObjects; ++i) if (m_ppGameObjects[i]) m_ppGameObjects[i]->UpdateTransform(NULL);
 
 
 
@@ -570,7 +570,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				if (pObjectsShader->obj[i]->aabb.Intersects(Bullet_Origin, Bullet_Direction, bullet_monster_distance))
 				{
 
-					cout << i << "¸íÁß" << endl;
+					cout << i << "ï¿½ï¿½ï¿½ï¿½" << endl;
 					pMultiSpriteObjectShader->hit = pObjectsShader->obj[i]->GetPosition();
 					pObjectsShader->obj.erase(pObjectsShader->obj.begin() + i);
 					cout << "obj.size : " << pObjectsShader->obj.size() << endl;
@@ -647,7 +647,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 
 	m_ppShaders[2]->Render(pd3dCommandList, pCamera);//Ç®
 
-	pObjectsShader->Render(pd3dCommandList, pCamera);//Çï±â
+	pObjectsShader->Render(pd3dCommandList, pCamera);//ï¿½ï¿½ï¿½
 
 	for (int i{}; i < m_nEnvironmentMappingShaders; ++i)
 		m_ppEnvironmentMappingShaders[i]->Render(pd3dCommandList, pCamera);
@@ -679,7 +679,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 
 	}
 
-	pMultiSpriteObjectShader->Render(pd3dCommandList, pCamera);//ºÒ²É
+	pMultiSpriteObjectShader->Render(pd3dCommandList, pCamera);//ï¿½Ò²ï¿½
 }
 
 SoundPlayer::SoundPlayer()
@@ -699,7 +699,7 @@ bool SoundPlayer::Initialize()
 	HRESULT hr;
 
 
-	// XAudio2 °´Ã¼ »ý¼º
+	// XAudio2 ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
 	hr = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hr)) {
 		return false;
@@ -707,7 +707,7 @@ bool SoundPlayer::Initialize()
 
 
 
-	// ¸¶½ºÅÍ º¸ÀÌ½º »ý¼º
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	hr = xAudio2_->CreateMasteringVoice(&masterVoice_);
 	if (FAILED(hr)) {
 		return false;
@@ -723,7 +723,7 @@ bool SoundPlayer::Initialize()
 	waveFormat_.cbSize = 0;
 
 
-	// ¼Ò½º º¸ÀÌ½º »ý¼º
+	// ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &waveFormat_);
 	if (FAILED(hr)) {
 		return false;
@@ -753,7 +753,7 @@ void SoundPlayer::Terminate()
 
 HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 {
-	// WAV ÆÄÀÏÀ» ÀÐ±â Àü¿ëÀ¸·Î ¿­±â
+	// WAV ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FILE* file = nullptr;
 	errno_t err = _wfopen_s(&file, filename, L"rb");
 	if (err != 0)
@@ -761,7 +761,7 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 		return HRESULT_FROM_WIN32(err);
 	}
 
-	// WAV ÆÄÀÏ Çì´õ ÀÐ±â
+	// WAV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 	WAVEHEADER header;
 	size_t bytesRead = fread(&header, 1, sizeof(WAVEHEADER), file);
 	if (bytesRead != sizeof(WAVEHEADER))
@@ -770,7 +770,7 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 		return E_FAIL;
 	}
 
-	// WAV ÆÄÀÏ °ËÁõ
+	// WAV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (memcmp(header.chunkId, "RIFF", 4) != 0 ||
 		memcmp(header.format, "WAVE", 4) != 0 ||
 		memcmp(header.subchunk1Id, "fmt ", 4) != 0 ||
@@ -780,7 +780,7 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 		return E_FAIL;
 	}
 
-	// ¿þÀÌºê Çü½Ä Á¤º¸ ÀÐ±â
+	// ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 	WAVEFORMATEX* pWaveFormat = (WAVEFORMATEX*)malloc(header.subchunk1Size);
 	if (!pWaveFormat)
 	{
@@ -796,7 +796,7 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 		return E_FAIL;
 	}
 
-	// ¹öÆÛ µ¥ÀÌÅÍ ÀÐ±â
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 	BYTE* pData = (BYTE*)malloc(header.subchunk2Size);
 	if (!pData)
 	{
@@ -814,16 +814,16 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 		//return E_FAIL;//0506
 	}
 
-	// ¹ÝÈ¯°ª ¼³Á¤
+	// ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	waveFormat_ = *pWaveFormat;
 	buffer_.pAudioData = pData;
 	buffer_.AudioBytes = header.subchunk2Size;
 
-	buffer_.Flags = XAUDIO2_END_OF_STREAM; // ½ºÆ®¸²ÀÇ ³¡ÀÓÀ» ³ªÅ¸³¿
-	buffer_.LoopCount = XAUDIO2_LOOP_INFINITE; // ·çÇÁ È½¼ö¸¦ ¹«ÇÑ´ë·Î ¼³Á¤
+	buffer_.Flags = XAUDIO2_END_OF_STREAM; // ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½
+	buffer_.LoopCount = XAUDIO2_LOOP_INFINITE; // ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 
-	// ÆÄÀÏ ´Ý±â
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½
 	fclose(file);
 
 	return S_OK;
@@ -832,7 +832,7 @@ HRESULT SoundPlayer::LoadWaveFile(const wchar_t* filename)
 bool SoundPlayer::LoadWave(const wchar_t* filename, int type = 0)
 {
 	HRESULT hr;
-	// WAVE ÆÄÀÏ ·Îµå
+	// WAVE ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
 	hr = LoadWaveFile(filename);
 
 
@@ -843,14 +843,14 @@ bool SoundPlayer::LoadWave(const wchar_t* filename, int type = 0)
 	if (type == 1)
 	{
 		buffer_.Flags = XAUDIO2_END_OF_STREAM;
-		buffer_.LoopCount = 0; // ÇÑ ¹ø¸¸ Àç»ýÇÏ°í ¸ØÃß±â À§ÇØ ·çÇÁ È½¼ö¸¦ 0À¸·Î ¼³Á¤
+		buffer_.LoopCount = 0; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	if (nullptr == sourceVoice_)
 	{
 		if (false == Initialize())
 		{
-			// ¼Ò½º º¸ÀÌ½º »ý¼º
+			// ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			hr = xAudio2_->CreateSourceVoice(&sourceVoice_, &waveFormat_);
 			if (FAILED(hr)) {
 				cout << "error" << endl;
@@ -861,7 +861,7 @@ bool SoundPlayer::LoadWave(const wchar_t* filename, int type = 0)
 		//Initialize();
 	}
 
-	// ¼Ò½º º¸ÀÌ½º¿¡ ¹öÆÛ ¼³Á¤
+	// ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	hr = sourceVoice_->SubmitSourceBuffer(&buffer_);
 	if (FAILED(hr)) {
 		return false;
@@ -872,7 +872,7 @@ bool SoundPlayer::LoadWave(const wchar_t* filename, int type = 0)
 
 void SoundPlayer::Play()
 {
-	// ¼Ò½º º¸ÀÌ½º Àç»ý
+	// ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½
 	if (sourceVoice_)
 		sourceVoice_->Start();
 }
@@ -881,7 +881,7 @@ void SoundPlayer::Stop()
 {
 	if (sourceVoice_)
 	{
-		// ¼Ò½º º¸ÀÌ½º ÁßÁö
+		// ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		sourceVoice_->Stop();
 		sourceVoice_->FlushSourceBuffers();
 	}

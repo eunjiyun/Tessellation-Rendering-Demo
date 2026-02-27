@@ -529,7 +529,7 @@ void CGameObject::Render2(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 void CGameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbGameObject = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
 	m_pd3dcbGameObject->Map(0, NULL, (void**)&m_pcbMappedGameObject);
@@ -1104,8 +1104,6 @@ void CMi24Object::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 //
 CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color) : CGameObject(0,1)
 {
-	
-
 	m_pHeightMapImage = new CHeightMapImage(pFileName, nWidth, nLength, xmf3Scale);
 
 	int cxQuadsPerBlock = nBlockWidth - 1;
@@ -1150,7 +1148,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	pTerrainTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Image/Detail_Texture_7.dds", RESOURCE_TEXTURE2D, 1);
 	pTerrainTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Image/HeightMap(Alpha).dds", RESOURCE_TEXTURE2D, 2);
 
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 #ifdef _WITH_TERRAIN_TESSELATION
 	CTerrainTessellationShader* pTerrainShader = new CTerrainTessellationShader();
@@ -1242,7 +1240,7 @@ CRippleWater::CRippleWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 	pRippleWaterShader->CreateShaderResourceViews(pd3dDevice, pWaterTexture, 0, 13);
 
-	UINT ncbElementBytes{ ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255) }; //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes{ ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255) }; //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 
 	pRippleWaterShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
@@ -1303,7 +1301,7 @@ CDynamicCubeMappingObject::CDynamicCubeMappingObject(ID3D12Device* pd3dDevice, I
 	for (int j = 0; j < 6; j++)
 	{
 		m_pd3dRtvCPUDescriptorHandles[j] = d3dRtvCPUDescriptorHandle;
-		d3dRTVDesc.Texture2DArray.FirstArraySlice = j; //i-¹øÂ° ·»´õ Å¸°Ù ºä´Â ÅØ½ºÃÄ Å¥ºêÀÇ i-¹øÂ° ¹öÆÛ¿¡¼­ ½ÃÀÛ
+		d3dRTVDesc.Texture2DArray.FirstArraySlice = j; //i-ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½ï¿½ Å¥ï¿½ï¿½ï¿½ï¿½ i-ï¿½ï¿½Â° ï¿½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		pd3dDevice->CreateRenderTargetView(pd3dResource, &d3dRTVDesc, m_pd3dRtvCPUDescriptorHandles[j]);
 		d3dRtvCPUDescriptorHandle.ptr += ::gnRtvDescriptorIncrementSize;
 	}

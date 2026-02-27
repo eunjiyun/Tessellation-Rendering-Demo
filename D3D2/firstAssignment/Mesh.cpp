@@ -36,7 +36,7 @@ void CMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dVertexBufferView);
 
-	if ( ( 0 <m_nSubMeshes ) && (nSubSet < m_nSubMeshes)  )//½ºÄ«ÀÌ ¹Ú½º°¡ »ç¿ë
+	if ( ( 0 <m_nSubMeshes ) && (nSubSet < m_nSubMeshes)  )//ï¿½ï¿½Ä«ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	{
 		pd3dCommandList->IASetIndexBuffer(&(m_pd3dSubSetIndexBufferViews[nSubSet]));
 		pd3dCommandList->DrawIndexedInstanced(m_pnSubSetIndices[nSubSet], 1, 0, 0, 0);
@@ -985,7 +985,7 @@ void CMeshIlluminated::CalculateTriangleListVertexNormals(XMFLOAT3* pxmf3Normals
 {
 	int nPrimitives = nVertices / 3;
 	UINT nIndex0, nIndex1, nIndex2;
-	for (int i = 0; i < nPrimitives; i++)
+	for (int i{}; i < nPrimitives; ++i)
 	{
 		nIndex0 = i * 3 + 0;
 		nIndex1 = i * 3 + 1;

@@ -135,7 +135,7 @@ float4 PSStandard(VS_STANDARD_OUTPUT input) : SV_TARGET
 	{
 		float3 normalW = input.normalW;
 		float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
-		float3 vNormal = normalize(cNormalColor.rgb * 2.0f - 1.0f); //[0, 1] �� [-1, 1]
+		float3 vNormal = normalize(cNormalColor.rgb * 2.0f - 1.0f); //[0, 1] �� [-1, 1]
 		normalW = normalize(mul(vNormal, TBN));
 		cIllumination = Lighting(input.positionW, normalW);
 		cColor = lerp(cColor, cIllumination, 0.5f);
@@ -207,12 +207,12 @@ VS_TEXTURED_OUTPUT VSSpriteAnimation(VS_TEXTURED_INPUT input)
 
 	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);//gmtxGameObject
 
-	if (gMaterial.texMat.z == 6)//���� 
+	if (gMaterial.texMat.z == 6)//���� 
 	{
 		output.uv.x = (input.uv.x) / gMaterial.texMat.z + gMaterial.texMat.x;
 		output.uv.y = input.uv.y / gMaterial.texMat.z + gMaterial.texMat.y;
 	}
-	else if (gMaterial.texMat.z == 8)//�Ҳ�
+	else if (gMaterial.texMat.z == 8)//�Ҳ�
 	{
 		output.uv.x = (input.uv.x) / gMaterial.texMat.z + gMaterial.texMat.x;
 		output.uv.y = input.uv.y / (gMaterial.texMat.z * 0.75f) + gMaterial.texMat.y;
@@ -469,6 +469,10 @@ HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(InputPatch<VS_TERRAIN_TESSE
 
 float CalculateTessFactor(float3 f3Position)
 {
+	//카메라 가까우면 64로 많이 쪼개고
+	//멀어지면 1로 줄인다
+
+	//거리 기반 Adaptive Tessellation
 	float fDistToCamera = distance(f3Position, gvCameraPosition);
 	float s = saturate((fDistToCamera - 10.0f) / (500.0f - 10.0f));
 
@@ -546,6 +550,8 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
 
+	//25개 control point를 이용해서
+	//Bezier 곡면으로 실제 위치 계산
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);

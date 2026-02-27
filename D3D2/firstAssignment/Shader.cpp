@@ -679,7 +679,7 @@ void CObjectsShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 
 void CObjectsShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbGameObjects = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes * m_nObjects,
 		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
@@ -687,7 +687,7 @@ void CObjectsShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graph
 
 
 
-	ncbElementBytes = ((sizeof(CB_GRASSOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	ncbElementBytes = ((sizeof(CB_GRASSOBJECT_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	grassObj = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes * m_nObjects,
 		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
@@ -1170,9 +1170,9 @@ void CMultiSpriteObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Gra
 			pSpriteMesh = new CTexturedRectMesh(pd3dDevice, pd3dCommandList, 20.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		else if (6 != j)
 			pSpriteMesh = new CTexturedRectMesh(pd3dDevice, pd3dCommandList, 50.0f, 50.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		else if(9!=j)//È­¸é
+		else if(9!=j)//È­ï¿½ï¿½
 			pSpriteMesh = new CTexturedRectMesh(pd3dDevice, pd3dCommandList, 130.0f, 10.0f, 0.0f, 0.0f, 45.0f, 0.0f);
-		else//Á¶ÁØ
+		else//ï¿½ï¿½ï¿½ï¿½
 			pSpriteMesh = new CTexturedRectMesh(pd3dDevice, pd3dCommandList, 3.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
 		pSpriteObject->SetMesh(0, pSpriteMesh);
@@ -1323,31 +1323,31 @@ void CMultiSpriteObjectsShader::Render(ID3D12GraphicsCommandList* pd3dCommandLis
 
 void CTexture::AnimateRowColumn(float fTime)
 {
-	texMat.x = float(m_nRow) / texMat.z;//°¡·Î
+	texMat.x = float(m_nRow) / texMat.z;//ï¿½ï¿½ï¿½ï¿½
 
 	if (4 != texMat.z)
-		texMat.y = float(m_nCol) / texMat.z;//¼¼·Î
+		texMat.y = float(m_nCol) / texMat.z;//ï¿½ï¿½ï¿½ï¿½
 	else
-		texMat.y = float(m_nCol) / (texMat.z * 1.5f);//¼¼·Î
+		texMat.y = float(m_nCol) / (texMat.z * 1.5f);//ï¿½ï¿½ï¿½ï¿½
 
 	if (0.0f == fTime)
 	{
 		if (++m_nCol == texMat.z)
 		{
-			++m_nRow;//°¡·Î Áõ°¡
-			m_nCol = 0; //¼¼·Î 0
+			++m_nRow;//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			m_nCol = 0; //ï¿½ï¿½ï¿½ï¿½ 0
 
 			m_bActive = false;
 		}
 		if (4 != texMat.z)
 		{
 			if (m_nRow == texMat.z)
-				m_nRow = 0;//°¡·Î 0
+				m_nRow = 0;//ï¿½ï¿½ï¿½ï¿½ 0
 		}
 		else
 		{
 			if (m_nRow == texMat.z * 1.5f)
-				m_nRow = 0;//°¡·Î 0
+				m_nRow = 0;//ï¿½ï¿½ï¿½ï¿½ 0
 		}
 	}
 }
@@ -1563,7 +1563,7 @@ D3D12_SHADER_BYTECODE CDynamicCubeMappingShader::CreatePixelShader()
 }
 void CDynamicCubeMappingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbGameObjects = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes * m_nObjects, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
 	m_pd3dcbGameObjects->Map(0, NULL, (void**)&m_pcbMappedGameObjects);
@@ -1875,7 +1875,7 @@ bool CTextureToViewportShader::IsInPlayerView(XMFLOAT3 playerPosition, XMFLOAT3 
 	float dotProduct = XMVectorGetX(XMVector3Dot(normalizedDirectionToMonster, playerLookVec));
 	float angle = std::acosf(dotProduct);
 
-	// ½Ã¾ß °¢µµº¸´Ù ÀÛÀº °æ¿ì¿¡¸¸ true¸¦ ¹ÝÈ¯
+	// ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ trueï¿½ï¿½ ï¿½ï¿½È¯
 	return angle <= fieldOfViewAngle;
 }
 
@@ -1888,19 +1888,19 @@ XMFLOAT2 CTextureToViewportShader::WorldToScreen(XMFLOAT3 worldPosition, CCamera
 
 	XMVECTOR worldPositionVec = XMLoadFloat3(&worldPosition);
 
-	// ¿ùµå ÁÂÇ¥¸¦ Ä«¸Þ¶ó ÁÂÇ¥·Î º¯È¯
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È¯
 	XMVECTOR cameraPositionVec = XMVector3TransformCoord(worldPositionVec, viewMatrix);
 
-	// Ä«¸Þ¶ó ÁÂÇ¥¸¦ Å¬¸³ ÁÂÇ¥·Î º¯È¯
+	// Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È¯
 	XMVECTOR clipPositionVec = XMVector3TransformCoord(cameraPositionVec, projectionMatrix);
 
-	// Å¬¸³ ÁÂÇ¥¸¦ NDC·Î º¯È¯
+	// Å¬ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ NDCï¿½ï¿½ ï¿½ï¿½È¯
 	XMFLOAT4 ndcPosition;
 	XMStoreFloat4(&ndcPosition, clipPositionVec);
 	ndcPosition.x /= ndcPosition.w;
 	ndcPosition.y /= ndcPosition.w;
 
-	// NDC¸¦ ½ºÅ©¸° ÁÂÇ¥·Î º¯È¯
+	// NDCï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È¯
 	XMFLOAT2 screenPosition;
 	screenPosition.x = (ndcPosition.x + 1.0f) * 0.5f * screenWidth;
 	screenPosition.y = (1.0f - ndcPosition.y) * 0.5f * screenHeight;
