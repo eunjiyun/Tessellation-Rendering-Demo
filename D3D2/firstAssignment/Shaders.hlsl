@@ -426,12 +426,19 @@ VS_TERRAIN_TESSELLATION_OUTPUT VSTerrainTessellation(VS_TERRAIN_INPUT input)
 }
 
 
-
+//Edge는 이웃 패치와 공유되는 경계라서 crack 방지용으로 따로 계산하고,
+//Inside는 그 패치 내부 전용이라 중심점 기준으로 계산해도 됨.
 struct HS_TERRAIN_TESSELLATION_CONSTANT
 {
 	//GPU에게 이 패치를 몇 개로 쪼갤지를 결정
+
+	//테두리 : 사각형의 4변을 각각 얼마나 쪼갤지
 	float fTessEdges[4] : SV_TessFactor;
-	float fTessInsides[2] : SV_InsideTessFactor;
+
+	//안쪽 : 내부를 얼마나 촘촘히 쪼갤지
+	//fTessInsides[0] -> u 방향 분할 수
+	//fTessInsides[1] -> v 방향 분할 수
+	float fTessInsides[2] : SV_InsideTessFactor;//이 패치를 얼마나 잘게 쪼갤지를 GPU에 알려주는 숫자가 TessFactor
 };
 
 struct HS_TERRAIN_TESSELLATION_OUTPUT
@@ -520,6 +527,14 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 
 //활용 예시 : 자동차 외형, 곡선 기반 건축물, 고품질 CAD 모델을 실시간 렌더링할 때 사용됨.
 
+//테셀레이션 기본 단위를 패치(patch)라고 부르는데,
+//패치는 크게 두 종류가 있음
+//triangle 패치 (삼각형 기반)
+//quad 패치 (사각형 기반)
+//[domain("quad")]는 사각형 하나를 기준으로 쪼갤거라는 선언.
+//사각형이 좋은 이유
+// : 지형(terrain)은 대부분 격자(Grid) 기반이라
+//사각형 패치로 나누는 게 자연스럽고 UV도 다루기 쉬움.
 
 [domain("quad")]
 //[partitioning("fractional_even")]
@@ -531,6 +546,18 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 
 
 [outputtopology("triangle_cw")]
+
+
+//Control Point는 곡면을 만들기 위한 손잡이 (조절점)
+//직선은 점 2개면 ok, 곡선은 점이 더 필요함, 곡면(2D로 휘는 면)은 점이 훨씬 더 필요함
+//5x5 = 25개 점으로 한 면을 정의함.
+//25개를 쓰는 이유는 Bezier Surface(베지어 곡면)을 쓰고 있음.
+//베지어 곡면은 곡면을 매끈하게 만들기 위해 Control Point를 격자 형태로 깔아두고,
+//그 점들을 기준으로 사이를 부드럽게 보간(중간값 계산)하는 방식.
+
+//패치(사각형) 1개를
+//Control Point 25개로 정의하고
+//그 사이를 베지어 공식으로 매끈하게 만드는 거.
 [outputcontrolpoints(25)]
 [patchconstantfunc("HSTerrainTessellationConstant")]
 [maxtessfactor(64.0f)]
@@ -552,11 +579,22 @@ float CalculateTessFactor(float3 f3Position)
 	//멀어지면 1로 줄인다
 
 	//거리 기반 Adaptive Tessellation
+	//distance() : 카메라와 해당 지점 사이 거리를 잰다
 	float fDistToCamera = distance(f3Position, gvCameraPosition);
+
+	//saturate() : 0~1 사이로 값 제한(안전장치)
 	float s = saturate((fDistToCamera - 10.0f) / (500.0f - 10.0f));
 
+
+	//lerp(64, 1, s) :
+	//s가 0이면 64 (가까움 -> 많이 쪼갬)
+	//s가 1이면 1 (멀어짐 -> 거의 안 쪼갬)
 	return(lerp(64.0f, 1.0f, s));
 	//	return(pow(2, lerp(20.0f, 4.0f, s)));
+
+	//=>이렇게 하는 이유는 사람 눈은 가까운 곳 디테일은 민감한데
+	//멀리 있는 건 디테일이 커도 잘 티가 안 나기에
+	//멀리 있는 지형까지 정점을 잔뜩 만들면 GPU 낭비가 됨
 }
 
 HS_TERRAIN_TESSELLATION_CONSTANT HSTerrainTessellationConstant(InputPatch<VS_TERRAIN_TESSELLATION_OUTPUT, 25> input)
