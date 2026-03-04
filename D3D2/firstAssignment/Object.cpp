@@ -1106,11 +1106,11 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 {
 	m_pHeightMapImage = new CHeightMapImage(pFileName, nWidth, nLength, xmf3Scale);
 
-	int cxQuadsPerBlock = nBlockWidth - 1;
-	int czQuadsPerBlock = nBlockLength - 1;
+	int cxQuadsPerBlock{ nBlockWidth - 1 };
+	int czQuadsPerBlock{ nBlockLength - 1 };
 
-	long cxBlocks = (nWidth - 1) / cxQuadsPerBlock;
-	long czBlocks = (nLength - 1) / czQuadsPerBlock;
+	long cxBlocks{ (nWidth - 1) / cxQuadsPerBlock };
+	long czBlocks{ (nLength - 1) / czQuadsPerBlock };
 
 #ifdef _WITH_VERTICES_AS_SCALING
 	nWidth = int(nWidth * xmf3Scale.x);
@@ -1126,12 +1126,12 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 	m_nMeshes = cxBlocks * czBlocks;
 	m_ppMeshes = new CMesh * [m_nMeshes];
-	for (int i = 0; i < m_nMeshes; i++)	m_ppMeshes[i] = NULL;
+	for (int i{}; i < m_nMeshes; ++i)	m_ppMeshes[i] = NULL;
 
 	CHeightMapGridMesh* pHeightMapGridMesh = NULL;
-	for (int z = 0, zStart = 0; z < czBlocks; z++)
+	for (int z{}, zStart{}; z < czBlocks; ++z)
 	{
-		for (int x = 0, xStart = 0; x < cxBlocks; x++)
+		for (int x{}, xStart{}; x < cxBlocks; ++x)
 		{
 			xStart = x * (nBlockWidth - 1);
 			zStart = z * (nBlockLength - 1);

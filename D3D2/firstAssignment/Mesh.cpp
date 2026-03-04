@@ -566,7 +566,7 @@ XMFLOAT3 CHeightMapImage::GetHeightMapNormal(int x, int z)
 {
 	if ((x < 0.0f) || (z < 0.0f) || (x >= m_nWidth) || (z >= m_nLength)) return(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	int nHeightMapIndex = x + (z * m_nWidth);
+	int nHeightMapIndex{ x + (z * m_nWidth) };
 	int xHeightMapAdd = (x < (m_nWidth - 1)) ? 1 : -1;
 	int zHeightMapAdd = (z < (m_nLength - 1)) ? m_nWidth : -m_nWidth;
 	float y1 = (float)m_pRawImagePixels[nHeightMapIndex] * m_xmf3Scale.y;
@@ -589,8 +589,8 @@ float CHeightMapImage::GetHeight(float fx, float fz, bool bReverseQuad)
 
 	int x = (int)fx;
 	int z = (int)fz;
-	float fxPercent = fx - x;
-	float fzPercent = fz - z;
+	float fxPercent{ fx - x };
+	float fzPercent{ fz - z };
 
 	float fBottomLeft = (float)m_pRawImagePixels[x + (z * m_nWidth)];
 	float fBottomRight = (float)m_pRawImagePixels[(x + 1) + (z * m_nWidth)];
@@ -612,9 +612,9 @@ float CHeightMapImage::GetHeight(float fx, float fz, bool bReverseQuad)
 			fBottomLeft = fTopLeft + (fBottomRight - fTopRight);
 	}
 #endif
-	float fTopHeight = fTopLeft * (1 - fxPercent) + fTopRight * fxPercent;
-	float fBottomHeight = fBottomLeft * (1 - fxPercent) + fBottomRight * fxPercent;
-	float fHeight = fBottomHeight * (1 - fzPercent) + fTopHeight * fzPercent;
+	float fTopHeight{ fTopLeft * (1 - fxPercent) + fTopRight * fxPercent };
+	float fBottomHeight{ fBottomLeft * (1 - fxPercent) + fBottomRight * fxPercent };
+	float fHeight{ fBottomHeight * (1 - fzPercent) + fTopHeight * fzPercent };
 
 	return(fHeight);
 }
@@ -625,8 +625,8 @@ float CHeightMapImage::GetHeight(float fx, float fz, XMFLOAT3 xmf3Scale)
 
 	int x = (int)fx;
 	int z = (int)fz;
-	float xFractional = fx - x;
-	float zFractional = fz - z;
+	float xFractional{ fx - x };
+	float zFractional{ fz - z };
 
 	bool bReverseQuad = ((z % 2) != 0);
 	float fHeight = GetInterpolatedHeight(x, z, xFractional, zFractional, bReverseQuad);
@@ -658,9 +658,9 @@ float CHeightMapImage::GetInterpolatedHeight(int x, int z, float xFractional, fl
 			fBottomLeft = fTopLeft + (fBottomRight - fTopRight);
 	}
 #endif
-	float fTopHeight = fTopLeft * (1 - xFractional) + fTopRight * xFractional;
-	float fBottomHeight = fBottomLeft * (1 - xFractional) + fBottomRight * xFractional;
-	float fHeight = fBottomHeight * (1 - zFractional) + fTopHeight * zFractional;
+	float fTopHeight{ fTopLeft * (1 - xFractional) + fTopRight * xFractional };
+	float fBottomHeight{ fBottomLeft * (1 - xFractional) + fBottomRight * xFractional };
+	float fHeight{ fBottomHeight * (1 - zFractional) + fTopHeight * zFractional };
 
 	return(fHeight);
 }
@@ -705,7 +705,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	int nIncrease = 3; //(Block Size == 9) ? 2, (Block Size == 13) ? 3
 	for (int i = 0, z = (zStart + nLength - 1); z >= zStart; z -= nIncrease)
 	{
-		for (int x = xStart; x < (xStart + nWidth); x += nIncrease, i++)
+		for (int x{ xStart }; x < (xStart + nWidth); x += nIncrease, i++)
 		{
 			float xPosition = x * m_xmf3Scale.x, zPosition = z * m_xmf3Scale.z;
 			fHeight = pHeightMapImage->GetHeight(xPosition, zPosition, m_xmf3Scale);
@@ -879,8 +879,8 @@ CGridMesh::CGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCo
 	CDiffusedTexturedVertex* pVertices = new CDiffusedTexturedVertex[m_nVertices];
 
 	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
-	int cxHeightMap = m_nWidth;
-	int czHeightMap = m_nLength;
+	int cxHeightMap{ m_nWidth };
+	int czHeightMap{ m_nLength };
 	if (pHeightMapImage)
 	{
 		cxHeightMap = pHeightMapImage->GetHeightMapWidth();
@@ -983,7 +983,7 @@ CMeshIlluminated::~CMeshIlluminated()
 
 void CMeshIlluminated::CalculateTriangleListVertexNormals(XMFLOAT3* pxmf3Normals, XMFLOAT3* pxmf3Positions, int nVertices)
 {
-	int nPrimitives = nVertices / 3;
+	int nPrimitives{ nVertices / 3 };
 	UINT nIndex0, nIndex1, nIndex2;
 	for (int i{}; i < nPrimitives; ++i)
 	{
@@ -1001,10 +1001,10 @@ void CMeshIlluminated::CalculateTriangleListVertexNormals(XMFLOAT3* pxmf3Normals
 	UINT nPrimitives = (pnIndices) ? (nIndices / 3) : (nVertices / 3);
 	XMFLOAT3 xmf3SumOfNormal, xmf3Edge01, xmf3Edge02, xmf3Normal;
 	UINT nIndex0, nIndex1, nIndex2;
-	for (UINT j = 0; j < nVertices; j++)
+	for (UINT j = 0; j < nVertices; ++j)
 	{
 		xmf3SumOfNormal = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		for (UINT i = 0; i < nPrimitives; i++)
+		for (UINT i = 0; i < nPrimitives; ++i)
 		{
 			nIndex0 = pnIndices[i * 3 + 0];
 			nIndex1 = pnIndices[i * 3 + 1];
@@ -1029,7 +1029,7 @@ void CMeshIlluminated::CalculateTriangleStripVertexNormals(XMFLOAT3* pxmf3Normal
 	for (UINT j = 0; j < nVertices; j++)
 	{
 		xmf3SumOfNormal = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		for (UINT i = 0; i < nPrimitives; i++)
+		for (UINT i = 0; i < nPrimitives; ++i)
 		{
 			nIndex0 = ((i % 2) == 0) ? (i + 0) : (i + 1);
 			if (pnIndices) nIndex0 = pnIndices[nIndex0];
@@ -1085,10 +1085,10 @@ CSphereMeshIlluminated::CSphereMeshIlluminated(ID3D12Device* pd3dDevice, ID3D12G
 
 	pxmf3Positions[k++] = XMFLOAT3(0.0f, +fRadius, 0.0f);
 	float theta_i, phi_j;
-	for (UINT j = 1; j < nStacks; j++)
+	for (UINT j = 1; j < nStacks; ++j)
 	{
 		phi_j = fDeltaPhi * j;
-		for (UINT i = 0; i < nSlices; i++)
+		for (UINT i = 0; i < nSlices; ++i)
 		{
 			theta_i = fDeltaTheta * i;
 			pxmf3Positions[k++] = XMFLOAT3(fRadius * sinf(phi_j) * cosf(theta_i), fRadius * cosf(phi_j), fRadius * sinf(phi_j) * sinf(theta_i));
@@ -1100,15 +1100,15 @@ CSphereMeshIlluminated::CSphereMeshIlluminated(ID3D12Device* pd3dDevice, ID3D12G
 	UINT* pnIndices = new UINT[m_nIndices];
 
 	k = 0;
-	for (UINT i = 0; i < nSlices; i++)
+	for (UINT i = 0; i < nSlices; ++i)
 	{
 		pnIndices[k++] = 0;
 		pnIndices[k++] = 1 + ((i + 1) % nSlices);
 		pnIndices[k++] = 1 + i;
 	}
-	for (UINT j = 0; j < nStacks - 2; j++)
+	for (UINT j = 0; j < nStacks - 2; ++j)
 	{
-		for (UINT i = 0; i < nSlices; i++)
+		for (UINT i = 0; i < nSlices; ++i)
 		{
 			pnIndices[k++] = 1 + (i + (j * nSlices));
 			pnIndices[k++] = 1 + (((i + 1) % nSlices) + (j * nSlices));
@@ -1118,7 +1118,7 @@ CSphereMeshIlluminated::CSphereMeshIlluminated(ID3D12Device* pd3dDevice, ID3D12G
 			pnIndices[k++] = 1 + (((i + 1) % nSlices) + ((j + 1) * nSlices));
 		}
 	}
-	for (UINT i = 0; i < nSlices; i++)
+	for (UINT i = 0; i < nSlices; ++i)
 	{
 		pnIndices[k++] = (m_nVertices - 1);
 		pnIndices[k++] = ((m_nVertices - 1) - nSlices) + i;
@@ -1129,7 +1129,7 @@ CSphereMeshIlluminated::CSphereMeshIlluminated(ID3D12Device* pd3dDevice, ID3D12G
 	CalculateVertexNormals(pxmf3Normals, pxmf3Positions, m_nVertices, pnIndices, m_nIndices);
 
 	CIlluminatedVertex* pVertices = new CIlluminatedVertex[m_nVertices];
-	for (UINT i = 0; i < m_nVertices; i++) pVertices[i] = CIlluminatedVertex(pxmf3Positions[i], pxmf3Normals[i]);
+	for (UINT i = 0; i < m_nVertices; ++i) pVertices[i] = CIlluminatedVertex(pxmf3Positions[i], pxmf3Normals[i]);
 	m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pVertices, m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
 	m_d3dVertexBufferView.BufferLocation = m_pd3dVertexBuffer->GetGPUVirtualAddress();

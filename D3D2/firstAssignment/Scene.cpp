@@ -611,7 +611,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 void CScene::OnPreRender(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Fence* pd3dFence, HANDLE hFenceEvent)
 {
-	for (int i = 0; i < m_nEnvironmentMappingShaders; i++)
+	for (int i{}; i < m_nEnvironmentMappingShaders; ++i)
 	{
 		m_ppEnvironmentMappingShaders[i]->OnPreRender(pd3dDevice, pd3dCommandQueue, pd3dFence, hFenceEvent, this);
 	}
