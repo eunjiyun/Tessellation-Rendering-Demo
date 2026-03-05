@@ -599,7 +599,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				}
 			}
 		}
-
 	}
 
 	for (int i{}; i < m_nEnvironmentMappingShaders; ++i)

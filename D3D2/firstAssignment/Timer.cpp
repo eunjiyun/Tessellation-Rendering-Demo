@@ -55,7 +55,7 @@ void CGameTimer::Tick(float fLockFPS)
 		if (m_nSampleCount < MAX_SAMPLE_COUNT) m_nSampleCount++;
 	}
 
-	m_nFramesPerSecond++;
+	++m_nFramesPerSecond;
 	m_fFPSTimeElapsed += fTimeElapsed;
 	if (m_fFPSTimeElapsed > 1.0f)
 	{
@@ -65,7 +65,7 @@ void CGameTimer::Tick(float fLockFPS)
 	}
 
 	m_fTimeElapsed = 0.0f;
-	for (ULONG i = 0; i < m_nSampleCount; i++) m_fTimeElapsed += m_fFrameTime[i];
+	for (ULONG i = 0; i < m_nSampleCount; ++i) m_fTimeElapsed += m_fFrameTime[i];
 	if (m_nSampleCount > 0) m_fTimeElapsed /= m_nSampleCount;
 }
 

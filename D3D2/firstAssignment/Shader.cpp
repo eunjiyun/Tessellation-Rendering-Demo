@@ -481,7 +481,7 @@ D3D12_SHADER_BYTECODE CTexturedShader::CreatePixelShader(ID3DBlob** ppd3dShaderB
 void CTexturedShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-	for (int j = 0; j < m_nObjects; j++)
+	for (int j{}; j < m_nObjects; ++j)
 	{
 		CB_GAMEOBJECT_INFO* pbMappedcbGameObject = (CB_GAMEOBJECT_INFO*)((UINT8*)m_pcbMappedGameObjects + (j * ncbElementBytes));
 		XMStoreFloat4x4(&pbMappedcbGameObject->m_xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_ppObjects[j]->m_xmf4x4World)));
@@ -547,7 +547,7 @@ void CObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	int nColumnSpace = 1.f, nColumnSize = 6;
 	int nFirstPassColumnSize = (m_nObjects % nColumnSize) > 0 ? (nColumnSize - 1) : nColumnSize;
 
-	int nObjects = 0;
+	int nObjects{};
 	for (int h{}; h < nFirstPassColumnSize; ++h)
 	{
 		for (int i{}; i < floor(float(m_nObjects) / float(nColumnSize)); ++i)
@@ -825,15 +825,15 @@ void CBillboardObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graph
 			BYTE nPixel = pRawFormatImage->GetRawImagePixel(x, z);
 			switch (nPixel)
 			{
-			case 102: nGrassObjects++; break;
-			case 128: nGrassObjects++; break;
-			case 153: nFlowerObjects++; break;
-			case 179: nFlowerObjects++; break;
-			case 204: nTreeObjects[0]++; break;
-			case 225: nTreeObjects[1]++; break;
-			case 255: nTreeObjects[2]++; break;
-			case 0: nBlacks++; break;
-			default: nOthers++; break;
+			case 102: ++nGrassObjects; break;
+			case 128: ++nGrassObjects; break;
+			case 153: ++nFlowerObjects; break;
+			case 179: ++nFlowerObjects; break;
+			case 204: ++nTreeObjects[0]; break;
+			case 225: ++nTreeObjects[1]; break;
+			case 255: ++nTreeObjects[2]; break;
+			case 0: ++nBlacks; break;
+			default: ++nOthers; break;
 			}
 		}
 	}
@@ -1605,7 +1605,7 @@ void CDynamicCubeMappingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Gra
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
 	XMFLOAT2 xmf2TerrainCenter = XMFLOAT2(pTerrain->GetWidth() * 0.5f, pTerrain->GetLength() * 0.5f);
 
-	for (int i = 0; i < m_nObjects; i++)
+	for (int i{}; i < m_nObjects; ++i)
 	{
 		m_ppObjects[i] = new CDynamicCubeMappingObject(pd3dDevice, pd3dCommandList, m_nCubeMapSize, d3dDsvCPUDescriptorHandle, d3dRtvCPUDescriptorHandle, this);
 
@@ -1632,7 +1632,7 @@ void CDynamicCubeMappingShader::ReleaseObjects()
 {
 	if (m_ppObjects)
 	{
-		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) delete m_ppObjects[j];
+		for (int j{}; j < m_nObjects; ++j) if (m_ppObjects[j]) delete m_ppObjects[j];
 		delete[] m_ppObjects;
 	}
 
@@ -1651,7 +1651,7 @@ void CDynamicCubeMappingShader::ReleaseUploadBuffers()
 {
 	if (m_ppObjects)
 	{
-		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->ReleaseUploadBuffers();
+		for (int j{}; j < m_nObjects; ++j) if (m_ppObjects[j]) m_ppObjects[j]->ReleaseUploadBuffers();
 	}
 
 #ifdef _WITH_BATCH_MATERIAL
@@ -1661,7 +1661,7 @@ void CDynamicCubeMappingShader::ReleaseUploadBuffers()
 
 void CDynamicCubeMappingShader::OnPreRender(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Fence* pd3dFence, HANDLE hFenceEvent, CScene* pScene)
 {
-	for (int i = 0; i < m_nObjects; i++)
+	for (int i{}; i < m_nObjects; ++i)
 	{
 		m_pd3dCommandAllocator->Reset();
 		m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -1686,7 +1686,7 @@ void CDynamicCubeMappingShader::Render(ID3D12GraphicsCommandList* pd3dCommandLis
 	if (m_pMaterial) m_pMaterial->UpdateShaderVariables(pd3dCommandList);
 #endif
 
-	for (int j = 0; j < m_nObjects; j++)
+	for (int j{}; j < m_nObjects; ++j)
 	{
 		if (m_ppObjects[j]) m_ppObjects[j]->Render(pd3dCommandList, pCamera);
 	}

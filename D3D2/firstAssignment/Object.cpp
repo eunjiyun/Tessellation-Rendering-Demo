@@ -146,8 +146,8 @@ int CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	nReads = (UINT)::fread(pstrTextureName, sizeof(char), nStrLength, pInFile);
 	pstrTextureName[nStrLength] = '\0';
 
-	bool bDuplicated = false;
-	bool bLoaded = false;
+	bool bDuplicated{ false };
+	bool bLoaded{ false };
 	if (strcmp(pstrTextureName, "null"))
 	{
 		bLoaded = true;
@@ -728,7 +728,7 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 {
 	char pstrToken[64] = { '\0' };
 
-	int nMaterial = 0;
+	int nMaterial{};
 	BYTE nStrLength = 0;
 
 	UINT nReads = (UINT)::fread(&m_nMaterials, sizeof(int), 1, pInFile);
@@ -884,7 +884,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Children>:"))
 		{
-			int nChilds = 0;
+			int nChilds{};
 			nReads = (UINT)::fread(&nChilds, sizeof(int), 1, pInFile);
 			if (nChilds > 0)
 			{
@@ -1150,6 +1150,8 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256�� ���
 
+
+
 #ifdef _WITH_TERRAIN_TESSELATION
 	CTerrainTessellationShader* pTerrainShader = new CTerrainTessellationShader();
 #else
@@ -1202,8 +1204,8 @@ CRippleWater::CRippleWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	m_nWidth = nWidth;
 	m_nLength = nLength;
 
-	int cxQuadsPerBlock = nBlockWidth - 1;
-	int czQuadsPerBlock = nBlockLength - 1;
+	int cxQuadsPerBlock{ nBlockWidth - 1 };
+	int czQuadsPerBlock{ nBlockLength - 1 };
 
 	m_xmf3Scale = xmf3Scale;
 
@@ -1265,7 +1267,7 @@ CRippleWater::~CRippleWater()
 CDynamicCubeMappingObject::CDynamicCubeMappingObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, LONG nCubeMapSize, D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle, D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle, CShader* pShader)
 {
 	//Camera[6]
-	for (int j = 0; j < 6; j++)
+	for (int j{}; j < 6; ++j)
 	{
 		m_ppCameras[j] = new CCamera();
 		m_ppCameras[j]->SetViewport(0, 0, nCubeMapSize, nCubeMapSize, 0.0f, 1.0f);
@@ -1298,7 +1300,7 @@ CDynamicCubeMappingObject::CDynamicCubeMappingObject(ID3D12Device* pd3dDevice, I
 	d3dRTVDesc.Texture2DArray.PlaneSlice = 0;
 	d3dRTVDesc.Texture2DArray.ArraySize = 1;
 
-	for (int j = 0; j < 6; j++)
+	for (int j{}; j < 6; ++j)
 	{
 		m_pd3dRtvCPUDescriptorHandles[j] = d3dRtvCPUDescriptorHandle;
 		d3dRTVDesc.Texture2DArray.FirstArraySlice = j; //i-��° ���� Ÿ�� ��� �ؽ��� ť���� i-��° ���ۿ��� ����
@@ -1320,7 +1322,7 @@ CDynamicCubeMappingObject::CDynamicCubeMappingObject(ID3D12Device* pd3dDevice, I
 
 CDynamicCubeMappingObject::~CDynamicCubeMappingObject()
 {
-	for (int j = 0; j < 6; j++)
+	for (int j{}; j < 6; ++j)
 	{
 		if (m_ppCameras[j])
 		{
@@ -1342,7 +1344,7 @@ void CDynamicCubeMappingObject::OnPreRender(ID3D12GraphicsCommandList* pd3dComma
 	::SynchronizeResourceTransition(pd3dCommandList, m_ppMaterials[0]->m_pTexture->GetResource(0), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	XMFLOAT3 xmf3Position = GetPosition();
-	for (int j = 0; j < 6; j++)
+	for (int j{}; j < 6; ++j)
 	{
 		m_ppCameras[j]->SetPosition(xmf3Position);
 		m_ppCameras[j]->GenerateViewMatrix(xmf3Position, Vector3::Add(xmf3Position, pxmf3LookAts[j]), pxmf3Ups[j]);

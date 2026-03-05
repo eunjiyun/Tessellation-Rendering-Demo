@@ -705,7 +705,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	int nIncrease = 3; //(Block Size == 9) ? 2, (Block Size == 13) ? 3
 	for (int i = 0, z = (zStart + nLength - 1); z >= zStart; z -= nIncrease)
 	{
-		for (int x{ xStart }; x < (xStart + nWidth); x += nIncrease, i++)
+		for (int x{ xStart }; x < (xStart + nWidth); x += nIncrease, ++i)
 		{
 			float xPosition = x * m_xmf3Scale.x, zPosition = z * m_xmf3Scale.z;
 			fHeight = pHeightMapImage->GetHeight(xPosition, zPosition, m_xmf3Scale);

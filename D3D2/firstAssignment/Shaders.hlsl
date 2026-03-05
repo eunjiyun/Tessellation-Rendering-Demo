@@ -391,7 +391,7 @@ struct VS_LIGHTING_INPUT
 	float3	normal		: NORMAL;
 };
 
-struct VS_LIGHTING_OUTPUT
+struct VS_LIGHTING_OUTPUT 
 {
 	float4	position    : SV_POSITION;
 	float3	positionW   : POSITION;
@@ -680,6 +680,7 @@ float3 CubicBezierSum5x5(OutputPatch<HS_TERRAIN_TESSELLATION_OUTPUT, 25> patch, 
 
 	return(f3Sum);
 }
+
 
 [domain("quad")]
 DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CONSTANT patchConstant, float2 uv : SV_DomainLocation, OutputPatch<HS_TERRAIN_TESSELLATION_OUTPUT, 25> patch)
