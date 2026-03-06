@@ -740,9 +740,9 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		}
 	}
 
-	for (int z = 0, zStart = 0; z < czBlocks; z++)
+	for (int z = 0, zStart = 0; z < czBlocks; ++z)
 	{
-		for (int x = 0, xStart = 0; x < cxBlocks; x++)
+		for (int x = 0, xStart = 0; x < cxBlocks; ++x)
 		{
 			xStart = x * (nBlockWidth - 1);
 			zStart = z * (nBlockLength - 1);
@@ -1026,7 +1026,7 @@ void CMeshIlluminated::CalculateTriangleStripVertexNormals(XMFLOAT3* pxmf3Normal
 	UINT nPrimitives = (pnIndices) ? (nIndices - 2) : (nVertices - 2);
 	XMFLOAT3 xmf3SumOfNormal(0.0f, 0.0f, 0.0f);
 	UINT nIndex0, nIndex1, nIndex2;
-	for (UINT j = 0; j < nVertices; j++)
+	for (UINT j = 0; j < nVertices; ++j)
 	{
 		xmf3SumOfNormal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		for (UINT i = 0; i < nPrimitives; ++i)
@@ -1074,7 +1074,7 @@ CSphereMeshIlluminated::CSphereMeshIlluminated(ID3D12Device* pd3dDevice, ID3D12G
 	m_nStride = sizeof(CIlluminatedVertex);
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	int k = 0;
+	int k{};
 #ifdef _WITH_SPHERE_INDEX_BUFFER
 	float fDeltaPhi = float(XM_PI / nStacks);
 	float fDeltaTheta = float((2.0f * XM_PI) / nSlices);

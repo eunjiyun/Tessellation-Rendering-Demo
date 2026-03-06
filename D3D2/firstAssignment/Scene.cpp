@@ -155,7 +155,7 @@ void CScene::ReleaseObjects()
 
 	if (m_ppShaders)
 	{
-		for (int i = 0; i < m_nShaders; i++)
+		for (int i{}; i < m_nShaders; ++i)
 		{
 			m_ppShaders[i]->ReleaseShaderVariables();
 			m_ppShaders[i]->ReleaseObjects();
@@ -176,7 +176,7 @@ void CScene::ReleaseObjects()
 
 	if (m_ppEnvironmentMappingShaders)
 	{
-		for (int i = 0; i < m_nEnvironmentMappingShaders; i++)
+		for (int i{}; i < m_nEnvironmentMappingShaders; ++i)
 		{
 			m_ppEnvironmentMappingShaders[i]->ReleaseShaderVariables();
 			m_ppEnvironmentMappingShaders[i]->ReleaseObjects();
@@ -445,8 +445,8 @@ void CScene::ReleaseUploadBuffers()
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrainWater) m_pTerrainWater->ReleaseUploadBuffers();
 
-	for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
-	for (int i = 0; i < m_nGameObjects; i++) m_ppGameObjects[i]->ReleaseUploadBuffers();
+	for (int i{}; i < m_nShaders; ++i) m_ppShaders[i]->ReleaseUploadBuffers();
+	for (int i{}; i < m_nGameObjects; ++i) m_ppGameObjects[i]->ReleaseUploadBuffers();
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
